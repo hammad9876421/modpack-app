@@ -2,13 +2,24 @@
   "name": "modpack-app",
   "private": true,
   "version": "1.0.0",
-  "type": "module",
   "description": "Minecraft Mod Browser & Modpack Builder",
+  "type": "module",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview --host"
   },
+  "keywords": [
+    "minecraft",
+    "modrinth",
+    "curseforge",
+    "modpack",
+    "react",
+    "vite",
+    "pwa"
+  ],
+  "author": "hammad9876421",
+  "license": "MIT",
   "dependencies": {
     "axios": "^1.11.0",
     "jszip": "^3.10.1",
