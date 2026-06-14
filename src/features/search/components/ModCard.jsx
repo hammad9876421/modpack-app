@@ -4,17 +4,20 @@ export default function ModCard({ mod, showToast }) {
   const { addMod } = useModpack();
 
   const handleAdd = () => {
-    addMod({
+    const result = addMod({
       id: mod.id,
       title: mod.title,
-      url: mod.project_url,
+      url: mod.url,
     });
 
-    showToast("Added to modpack");
+    if (showToast) {
+      showToast(result.message);
+    }
   };
 
   const handleDownload = () => {
     const url =
+      mod.url ||
       mod.project_url ||
       mod.download_url ||
       mod.files?.[0]?.url;
@@ -26,7 +29,9 @@ export default function ModCard({ mod, showToast }) {
       a.click();
     }
 
-    showToast("Download started");
+    if (showToast) {
+      showToast("Download started");
+    }
   };
 
   return (
@@ -34,7 +39,11 @@ export default function ModCard({ mod, showToast }) {
 
       <h3>{mod.title}</h3>
 
-      <div className="mod-actions">
+      <p style={{ fontSize: "12px", opacity: 0.7 }}>
+        {mod.author || "Unknown"}
+      </p>
+
+      <div style={{ display: "flex", gap: "10px" }}>
 
         <button onClick={handleAdd}>
           ➕ Add

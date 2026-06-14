@@ -1,61 +1,60 @@
-import ExportButton from "./components/ExportButton";
-import ZipExportButton from "./components/ZipExportButton";
-import VersionSelector from "./components/VersionSelector";
-import LoaderSelector from "./components/LoaderSelector";
-import ModpackMetaEditor from "./components/ModpackMetaEditor";
-import { importModpack } from "./modpackImport";
-import useModpack from "./useModpack";
+import useModpackManager from "./useModpackManager";
 
 export default function ModpackPage() {
   const {
-    modpack,
-    removeMod,
-    clearModpack,
-    setFullModpack,
-  } = useModpack();
+    modpacks,
+    activePack,
+    addPack,
+    removePack,
+    switchPack,
+  } = useModpackManager();
 
   return (
-    <div className="page">
+    <div style={{ padding: "20px" }}>
 
-      <h2>🧩 Modpack Builder</h2>
+      <h2>📦 Modpacks</h2>
 
-      <ModpackMetaEditor />
+      <button onClick={() => addPack("New Modpack")}>
+        + Create Modpack
+      </button>
 
-      <VersionSelector />
-      <LoaderSelector />
+      <hr />
 
-      <ExportButton />
-      <ZipExportButton />
+      {modpacks.map((pack) => (
+        <div
+          key={pack.id}
+          style={{
+            padding: "10px",
+            margin: "5px 0",
+            border: "1px solid #ccc",
+            cursor: "pointer",
+            fontWeight:
+              activePack?.id === pack.id ? "bold" : "normal",
+          }}
+          onClick={() => switchPack(pack.id)}
+        >
+          {pack.name}
 
-      <input
-        type="file"
-        accept="application/json"
-        onChange={(e) =>
-          importModpack(e.target.files[0], setFullModpack)
-        }
-      />
-
-      {modpack.length === 0 && (
-        <p>No mods in modpack yet</p>
-      )}
-
-      {modpack.map((mod) => (
-        <div key={mod.id} className="card">
-
-          <h3>{mod.title}</h3>
-
-          <button onClick={() => removeMod(mod.id)}>
-            Remove
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              removePack(pack.id);
+            }}
+            style={{ marginLeft: "10px" }}
+          >
+            ❌
           </button>
-
         </div>
       ))}
 
-      {modpack.length > 0 && (
-        <button onClick={clearModpack}>
-          Clear Modpack
-        </button>
-      )}
+      <hr />
+
+      <div>
+        <h3>Active Pack</h3>
+        <pre>
+          {JSON.stringify(activePack, null, 2)}
+        </pre>
+      </div>
 
     </div>
   );
