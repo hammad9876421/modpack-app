@@ -1,16 +1,74 @@
-# React + Vite
+# ModPack App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A mobile-first Minecraft Mod Browser and Modpack Builder built with React and Vite.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Current
 
-## React Compiler
+- React
+- Vite
+- Mobile-first layout
+- PWA manifest
+- Dark theme
+- GitHub & Vercel ready
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Planned
 
-## Expanding the ESLint configuration
+- Modrinth search
+- CurseForge search
+- Mirror fallback
+- Infinite scrolling
+- Advanced filters
+- Mod details
+- One-click download
+- One-click add to modpack
+- ZIP export
+- Download manager
+- Favorites
+- History
+- Offline cache
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Tech Stack
+
+- React
+- Vite
+- Axios
+- JSZip
+
+## Development
+
+Start development server:
+
+```bash
+npm run dev
+```
+
+Build production version:
+
+```bash
+npm run build
+```
+
+## Git Workflow
+
+After every successful step:
+
+```bash
+npm run build
+git add .
+git commit -m "Meaningful message"
+git push
+```
+
+## Version
+
+Current version:
+
+```
+v1.0.0-alpha
+```
+
+## License
+
+MIT
