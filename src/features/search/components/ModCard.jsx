@@ -1,37 +1,27 @@
 import useModpack from "../../modpack/useModpack";
+import { addDownload } from "../../downloads/downloadEngine";
 
 export default function ModCard({ mod, showToast }) {
-  const { addMod } = useModpack();
+  const { addModToActivePack } = useModpack();
 
   const handleAdd = () => {
-    const result = addMod({
+    addModToActivePack({
       id: mod.id,
       title: mod.title,
       url: mod.url,
     });
 
-    if (showToast) {
-      showToast(result.message);
-    }
+    if (showToast) showToast("Added to modpack");
   };
 
   const handleDownload = () => {
-    const url =
-      mod.url ||
-      mod.project_url ||
-      mod.download_url ||
-      mod.files?.[0]?.url;
+    addDownload({
+      id: mod.id,
+      name: mod.title,
+      url: mod.url,
+    });
 
-    if (url) {
-      const a = document.createElement("a");
-      a.href = url;
-      a.target = "_blank";
-      a.click();
-    }
-
-    if (showToast) {
-      showToast("Download started");
-    }
+    if (showToast) showToast("Added to download queue");
   };
 
   return (
@@ -40,13 +30,13 @@ export default function ModCard({ mod, showToast }) {
       <h3>{mod.title}</h3>
 
       <p style={{ fontSize: "12px", opacity: 0.7 }}>
-        {mod.author || "Unknown"}
+        {mod.author || "Unknown author"}
       </p>
 
-      <div style={{ display: "flex", gap: "10px" }}>
+      <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
 
         <button onClick={handleAdd}>
-          ➕ Add
+          ➕ Add to Modpack
         </button>
 
         <button onClick={handleDownload}>
