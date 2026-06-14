@@ -1,8 +1,10 @@
+import { resolveModDownload } from "./modDownloadResolver";
+
 let queue = [];
 let listeners = [];
 let isProcessing = false;
 
-/* ---------------- LISTENER SYSTEM ---------------- */
+/* ---------------- LISTENERS ---------------- */
 export function onDownloadUpdate(cb) {
   listeners.push(cb);
 
@@ -15,8 +17,8 @@ function notify() {
   listeners.forEach((cb) => cb([...queue]));
 }
 
-/* ---------------- ADD DOWNLOAD ---------------- */
-export function addDownload(item) {
+/* ---------------- ADD DOWNLOAD (REAL RESOLVER CONNECTED) ---------------- */
+export async function addDownload(item, mcVersion, loader) {
   const exists = queue.find((q) => q.id === item.id);
 
   if (exists) {
@@ -25,10 +27,33 @@ export function addDownload(item) {
     return;
   }
 
+  // 🧠 REAL MODRINTH RESOLUTION
+  const resolved = await resolveModDownload(
+    item.id,
+    mcVersion,
+    loader
+  );
+
+  if (!resolved || !resolved.download?.primary) {
+    queue.push({
+      id: item.id,
+      name: item.name,
+      status: "failed",
+      progress: 0,
+      error: "No valid download found for this version/loader",
+    });
+
+    notify();
+    return;
+  }
+
   queue.push({
     id: item.id,
     name: item.name,
-    url: item.url,
+
+    url: resolved.download.primary,
+    filename: resolved.download.filename,
+
     progress: 0,
     status: "queued",
     retries: 0,
@@ -38,7 +63,7 @@ export function addDownload(item) {
   notify();
 }
 
-/* ---------------- FAKE DOWNLOAD ---------------- */
+/* ---------------- FAKE DOWNLOAD ENGINE (SIMULATED TRANSFER) ---------------- */
 function fakeDownload(item) {
   return new Promise((resolve) => {
     let progress = 0;
@@ -46,19 +71,21 @@ function fakeDownload(item) {
     item.status = "downloading";
 
     const interval = setInterval(() => {
-      progress += Math.random() * 20;
+      progress += Math.random() * 18;
 
       if (progress >= 100) {
         clearInterval(interval);
+
         item.progress = 100;
         item.status = "done";
+
         resolve(item);
       } else {
         item.progress = Math.min(100, progress);
       }
 
       notify();
-    }, 250);
+    }, 200);
   });
 }
 
@@ -69,7 +96,7 @@ async function processQueue() {
   isProcessing = true;
 
   for (const item of queue) {
-    if (item.status === "done") continue;
+    if (item.status === "done" || item.status === "failed") continue;
 
     try {
       await fakeDownload(item);
@@ -83,14 +110,16 @@ async function processQueue() {
   isProcessing = false;
 }
 
-/* ---------------- RETRY FAILED ---------------- */
+/* ---------------- RETRY FAILED DOWNLOADS ---------------- */
 export function retryFailed() {
   queue.forEach((item) => {
     if (item.status === "failed") {
       item.status = "queued";
       item.progress = 0;
+      item.error = null;
     }
   });
 
   processQueue();
+  notify();
 }
