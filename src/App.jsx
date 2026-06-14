@@ -1,32 +1,22 @@
 import { useState } from "react";
 import MainLayout from "./layouts/MainLayout";
+import BottomNav from "./features/shared/BottomNav";
+import SearchPage from "./features/search/SearchPage";
 
 export default function App() {
   const [page, setPage] = useState("home");
 
   const renderPage = () => {
-    switch (page) {
-      case "search":
-        return <h2>Search (Phase 3)</h2>;
-      case "modpack":
-        return <h2>Modpack (Phase 5)</h2>;
-      case "settings":
-        return <h2>Settings (Phase 6)</h2>;
-      default:
-        return <h2>Home</h2>;
-    }
+    if (page === "search") return <SearchPage />;
+    if (page === "modpack") return <h2>Modpack (Coming)</h2>;
+    if (page === "settings") return <h2>Settings (Coming)</h2>;
+    return <h2>Home</h2>;
   };
 
   return (
     <MainLayout>
-      {renderPage()}
-
-      <nav className="bottom-nav">
-        <button onClick={() => setPage("home")}>Home</button>
-        <button onClick={() => setPage("search")}>Search</button>
-        <button onClick={() => setPage("modpack")}>Modpack</button>
-        <button onClick={() => setPage("settings")}>Settings</button>
-      </nav>
+      <div className="page">{renderPage()}</div>
+      <BottomNav page={page} setPage={setPage} />
     </MainLayout>
   );
 }
