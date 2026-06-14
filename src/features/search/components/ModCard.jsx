@@ -1,36 +1,50 @@
-export default function ModCard({ mod, onClick, onFavorite }) {
-  return (
-    <div className="card" onClick={() => onClick?.(mod)}>
+import useModpack from "../../modpack/useModpack";
 
-      {mod.icon && (
-        <img
-          src={mod.icon}
-          alt={mod.title}
-          width="40"
-          height="40"
-        />
-      )}
+export default function ModCard({ mod, showToast }) {
+  const { addMod } = useModpack();
+
+  const handleAdd = () => {
+    addMod({
+      id: mod.id,
+      title: mod.title,
+      url: mod.project_url,
+    });
+
+    showToast("Added to modpack");
+  };
+
+  const handleDownload = () => {
+    const url =
+      mod.project_url ||
+      mod.download_url ||
+      mod.files?.[0]?.url;
+
+    if (url) {
+      const a = document.createElement("a");
+      a.href = url;
+      a.target = "_blank";
+      a.click();
+    }
+
+    showToast("Download started");
+  };
+
+  return (
+    <div className="mod-card">
 
       <h3>{mod.title}</h3>
 
-      <p>
-        {mod.description
-          ? mod.description.slice(0, 120)
-          : "No description available"}
-      </p>
+      <div className="mod-actions">
 
-      <small>
-        ⬇ {mod.downloads || 0} downloads
-      </small>
+        <button onClick={handleAdd}>
+          ➕ Add
+        </button>
 
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onFavorite?.(mod);
-        }}
-      >
-        ⭐ Add
-      </button>
+        <button onClick={handleDownload}>
+          ⬇ Download
+        </button>
+
+      </div>
 
     </div>
   );

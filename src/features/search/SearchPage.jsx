@@ -1,89 +1,63 @@
 import { useEffect, useState } from "react";
-import { unifiedSearch } from "./api";
 import ModCard from "./components/ModCard";
-import SearchBar from "./components/SearchBar";
-import FilterBar from "./components/FilterBar";
-import LoaderFilter from "./components/LoaderFilter";
-import useDebounce from "../../hooks/useDebounce";
-import ModDetailPage from "./ModDetailPage";
-import useFavorites from "../../hooks/useFavorites";
+import useToast from "../ui/useToast";
+import Toast from "../ui/Toast";
 
 export default function SearchPage() {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
+  const [mods, setMods] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [selectedMod, setSelectedMod] = useState(null);
-  const [version, setVersion] = useState("");
-  const [loader, setLoader] = useState("");
 
-  const debouncedQuery = useDebounce(query, 500);
-  const { addFavorite } = useFavorites();
+  const { toast, showToast } = useToast();
 
-  const fetchResults = async (q, p = 1, append = false) => {
-    if (!q.trim()) return;
-
+  const fetchMods = async () => {
     setLoading(true);
 
-    const data = await unifiedSearch(q, p);
-
-    setResults((prev) =>
-      append ? [...prev, ...(data || [])] : (data || [])
+    const res = await fetch(
+      `https://api.modrinth.com/v2/search?limit=20&offset=${(page - 1) * 20}`
     );
 
+    const data = await res.json();
+
+    setMods((prev) => [...prev, ...(data.hits || [])]);
     setLoading(false);
   };
 
   useEffect(() => {
-    setPage(1);
-    fetchResults(debouncedQuery, 1, false);
-  }, [debouncedQuery]);
+    fetchMods();
+  }, [page]);
 
-  const loadMore = () => {
-    const next = page + 1;
-    setPage(next);
-    fetchResults(query, next, true);
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + window.scrollY >=
+        document.body.offsetHeight - 200
+      ) {
+        setPage((p) => p + 1);
+      }
+    };
 
-  if (selectedMod) {
-    return (
-      <ModDetailPage
-        modId={selectedMod.id}
-        onBack={() => setSelectedMod(null)}
-      />
-    );
-  }
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <div className="page">
+    <div className="mod-grid">
 
-      <h2>Search Mods</h2>
+      <h2>🔍 Explore Mods</h2>
 
-      <SearchBar
-        value={query}
-        onChange={setQuery}
-        onSearch={() => fetchResults(query)}
-      />
-
-      <FilterBar version={version} setVersion={setVersion} />
-      <LoaderFilter loader={loader} setLoader={setLoader} />
-
-      {loading && <p>Loading...</p>}
-
-      {results.map((mod) => (
+      {mods.map((mod) => (
         <ModCard
           key={mod.id}
           mod={mod}
-          onClick={setSelectedMod}
-          onFavorite={addFavorite}
+          showToast={showToast}
         />
       ))}
 
-      {results.length > 0 && (
-        <button onClick={loadMore}>
-          Load More
-        </button>
-      )}
+      {loading && <p>Loading...</p>}
+
+      {/* GLOBAL TOAST */}
+      <Toast message={toast} />
 
     </div>
   );
