@@ -1,0 +1,44 @@
+export const LOADERS = ["forge", "fabric", "neoforge"];
+
+export const MC_VERSIONS = [
+  "1.18.2",
+  "1.19.2",
+  "1.20.1",
+  "1.20.4",
+  "1.21.1",
+];
+
+/* ---------------- NORMALIZE MOD COMPATIBILITY ---------------- */
+export function normalizeCompatibility(mod) {
+  return {
+    ...mod,
+
+    // expected fields from API or fallback
+    mcVersions: mod.game_versions || [],
+    loaders: mod.loaders || [],
+  };
+}
+
+/* ---------------- CHECK COMPATIBILITY ---------------- */
+export function isCompatible(mod, selectedVersion, selectedLoader) {
+  if (!mod) return false;
+
+  const versionMatch =
+    mod.mcVersions.length === 0 ||
+    mod.mcVersions.includes(selectedVersion);
+
+  const loaderMatch =
+    mod.loaders.length === 0 ||
+    mod.loaders.includes(selectedLoader);
+
+  return versionMatch && loaderMatch;
+}
+
+/* ---------------- FILTER MOD LIST ---------------- */
+export function filterCompatibleMods(mods, version, loader) {
+  if (!Array.isArray(mods)) return [];
+
+  return mods.filter((mod) =>
+    isCompatible(mod, version, loader)
+  );
+}

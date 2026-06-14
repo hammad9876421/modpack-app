@@ -4,12 +4,14 @@ import {
   createModpack,
   updateModpack,
   deleteModpack,
+  updateModpackMeta,
 } from "./storage/modpackStorage";
 
 export default function useModpackManager() {
   const [modpacks, setModpacks] = useState([]);
   const [activeId, setActiveId] = useState(null);
 
+  /* ---------------- INIT ---------------- */
   useEffect(() => {
     const data = loadModpacks();
     setModpacks(data);
@@ -22,7 +24,7 @@ export default function useModpackManager() {
   const activePack =
     modpacks.find((p) => p.id === activeId) || null;
 
-  /* CREATE */
+  /* ---------------- CREATE ---------------- */
   const addPack = (name) => {
     const newPack = createModpack(name);
 
@@ -32,7 +34,7 @@ export default function useModpackManager() {
     setActiveId(newPack.id);
   };
 
-  /* DELETE */
+  /* ---------------- DELETE ---------------- */
   const removePack = (id) => {
     deleteModpack(id);
 
@@ -44,12 +46,12 @@ export default function useModpackManager() {
     }
   };
 
-  /* SWITCH */
+  /* ---------------- SWITCH ---------------- */
   const switchPack = (id) => {
     setActiveId(id);
   };
 
-  /* ADD MOD */
+  /* ---------------- ADD MOD ---------------- */
   const addModToActivePack = (mod) => {
     if (!activePack || !mod) return;
 
@@ -70,13 +72,59 @@ export default function useModpackManager() {
     setModpacks(newList);
   };
 
+  /* ---------------- VERSION CONTROL ---------------- */
+  const setVersion = (version) => {
+    if (!activePack) return;
+
+    const updated = {
+      ...activePack,
+      mcVersion: version,
+    };
+
+    updateModpackMeta(activePack.id, {
+      mcVersion: version,
+    });
+
+    setModpacks((prev) =>
+      prev.map((p) =>
+        p.id === activePack.id ? updated : p
+      )
+    );
+  };
+
+  /* ---------------- LOADER CONTROL ---------------- */
+  const setLoader = (loader) => {
+    if (!activePack) return;
+
+    const updated = {
+      ...activePack,
+      loader,
+    };
+
+    updateModpackMeta(activePack.id, {
+      loader,
+    });
+
+    setModpacks((prev) =>
+      prev.map((p) =>
+        p.id === activePack.id ? updated : p
+      )
+    );
+  };
+
+  /* ---------------- RETURN API ---------------- */
   return {
     modpacks,
     activePack,
     activeId,
+
     addPack,
     removePack,
     switchPack,
     addModToActivePack,
+
+    // 🧠 NEW ENGINE FEATURES
+    setVersion,
+    setLoader,
   };
 }
