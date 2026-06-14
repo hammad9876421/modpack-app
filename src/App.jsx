@@ -1,4 +1,5 @@
 import { useState } from "react";
+import MainLayout from "./layouts/MainLayout";
 
 export default function App() {
   const [page, setPage] = useState("home");
@@ -6,101 +7,26 @@ export default function App() {
   const renderPage = () => {
     switch (page) {
       case "search":
-        return (
-          <div className="page">
-            <h2>Search Mods</h2>
-            <p>Coming in Phase 3</p>
-          </div>
-        );
-
+        return <h2>Search (Phase 3)</h2>;
       case "modpack":
-        return (
-          <div className="page">
-            <h2>Modpack Builder</h2>
-            <p>Coming in Phase 5</p>
-          </div>
-        );
-
+        return <h2>Modpack (Phase 5)</h2>;
       case "settings":
-        return (
-          <div className="page">
-            <h2>Settings</h2>
-            <p>Coming in Phase 6</p>
-          </div>
-        );
-
+        return <h2>Settings (Phase 6)</h2>;
       default:
-        return (
-          <div className="page">
-            <h1>ModPack App</h1>
-
-            <p>
-              Minecraft Mod Browser &
-              Modpack Builder
-            </p>
-
-            <div className="card">
-
-              <p>
-                ✅ Phase 1 is currently being built.
-              </p>
-
-              <p>
-                Future features:
-              </p>
-
-              <ul>
-                <li>Infinite scrolling</li>
-                <li>Modrinth search</li>
-                <li>CurseForge search</li>
-                <li>One-click download</li>
-                <li>One-click add to modpack</li>
-                <li>ZIP export</li>
-              </ul>
-
-            </div>
-          </div>
-        );
+        return <h2>Home</h2>;
     }
   };
 
   return (
-    <div className="app">
-
-      <main>
-
-        {renderPage()}
-
-      </main>
+    <MainLayout>
+      {renderPage()}
 
       <nav className="bottom-nav">
-
-        <button
-          onClick={() => setPage("home")}
-        >
-          Home
-        </button>
-
-        <button
-          onClick={() => setPage("search")}
-        >
-          Search
-        </button>
-
-        <button
-          onClick={() => setPage("modpack")}
-        >
-          Modpack
-        </button>
-
-        <button
-          onClick={() => setPage("settings")}
-        >
-          Settings
-        </button>
-
+        <button onClick={() => setPage("home")}>Home</button>
+        <button onClick={() => setPage("search")}>Search</button>
+        <button onClick={() => setPage("modpack")}>Modpack</button>
+        <button onClick={() => setPage("settings")}>Settings</button>
       </nav>
-
-    </div>
+    </MainLayout>
   );
 }
