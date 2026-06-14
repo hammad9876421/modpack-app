@@ -1,6 +1,6 @@
-export default function ModCard({ mod }) {
+export default function ModCard({ mod, onClick, onFavorite }) {
   return (
-    <div className="card">
+    <div className="card" onClick={() => onClick?.(mod)}>
 
       {mod.icon && (
         <img
@@ -22,6 +22,15 @@ export default function ModCard({ mod }) {
       <small>
         ⬇ {mod.downloads || 0} downloads
       </small>
+
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onFavorite?.(mod);
+        }}
+      >
+        ⭐ Add
+      </button>
 
     </div>
   );

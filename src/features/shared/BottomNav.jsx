@@ -3,6 +3,7 @@ import Button from "./Button";
 export default function BottomNav({ page, setPage }) {
   return (
     <nav className="bottom-nav">
+
       <Button active={page === "home"} onClick={() => setPage("home")}>
         Home
       </Button>
@@ -15,9 +16,10 @@ export default function BottomNav({ page, setPage }) {
         Modpack
       </Button>
 
-      <Button active={page === "settings"} onClick={() => setPage("settings")}>
-        Settings
+      <Button active={page === "favorites"} onClick={() => setPage("favorites")}>
+        ⭐ Favorites
       </Button>
+
     </nav>
   );
 }

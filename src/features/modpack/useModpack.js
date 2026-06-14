@@ -1,13 +1,20 @@
 import { useState } from "react";
 
-export default function useModpackStore() {
+export default function useModpack() {
   const [modpack, setModpack] = useState(() => {
     return JSON.parse(localStorage.getItem("modpack") || "[]");
   });
 
+  const [minecraftVersion, setMinecraftVersion] = useState(
+    localStorage.getItem("mcVersion") || "1.21.1"
+  );
+
+  const [loader, setLoader] = useState(
+    localStorage.getItem("loader") || "fabric"
+  );
+
   const addMod = (mod) => {
-    const exists = modpack.find((m) => m.id === mod.id);
-    if (exists) return;
+    if (modpack.find((m) => m.id === mod.id)) return;
 
     const updated = [...modpack, mod];
     setModpack(updated);
@@ -25,9 +32,19 @@ export default function useModpackStore() {
     localStorage.removeItem("modpack");
   };
 
-  const setModpackDirect = (mods) => {
+  const setFullModpack = (mods) => {
     setModpack(mods);
     localStorage.setItem("modpack", JSON.stringify(mods));
+  };
+
+  const setVersion = (version) => {
+    setMinecraftVersion(version);
+    localStorage.setItem("mcVersion", version);
+  };
+
+  const setLoaderType = (type) => {
+    setLoader(type);
+    localStorage.setItem("loader", type);
   };
 
   return {
@@ -35,6 +52,10 @@ export default function useModpackStore() {
     addMod,
     removeMod,
     clearModpack,
-    setModpack: setModpackDirect,
+    setFullModpack,
+    minecraftVersion,
+    setVersion,
+    loader,
+    setLoaderType,
   };
 }
