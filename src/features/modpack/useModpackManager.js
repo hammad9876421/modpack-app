@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   loadModpacks,
-  saveModpacks,
   createModpack,
   updateModpack,
   deleteModpack,
@@ -11,7 +10,6 @@ export default function useModpackManager() {
   const [modpacks, setModpacks] = useState([]);
   const [activeId, setActiveId] = useState(null);
 
-  // INIT
   useEffect(() => {
     const data = loadModpacks();
     setModpacks(data);
@@ -21,18 +19,20 @@ export default function useModpackManager() {
     }
   }, []);
 
-  const activePack = modpacks.find((p) => p.id === activeId);
+  const activePack =
+    modpacks.find((p) => p.id === activeId) || null;
 
-  // CREATE
+  /* CREATE */
   const addPack = (name) => {
     const newPack = createModpack(name);
-    const updated = [...modpacks, newPack];
 
+    const updated = [...modpacks, newPack];
     setModpacks(updated);
+
     setActiveId(newPack.id);
   };
 
-  // DELETE
+  /* DELETE */
   const removePack = (id) => {
     deleteModpack(id);
 
@@ -44,14 +44,14 @@ export default function useModpackManager() {
     }
   };
 
-  // SWITCH
+  /* SWITCH */
   const switchPack = (id) => {
     setActiveId(id);
   };
 
-  // ADD MOD TO ACTIVE PACK
+  /* ADD MOD */
   const addModToActivePack = (mod) => {
-    if (!activePack) return;
+    if (!activePack || !mod) return;
 
     const exists = activePack.mods.find((m) => m.id === mod.id);
     if (exists) return;

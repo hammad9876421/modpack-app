@@ -1,10 +1,8 @@
 let queue = [];
-let isProcessing = false;
 let listeners = [];
+let isProcessing = false;
 
-/**
- * Subscribe to download updates
- */
+/* ---------------- LISTENER SYSTEM ---------------- */
 export function onDownloadUpdate(cb) {
   listeners.push(cb);
 
@@ -13,33 +11,34 @@ export function onDownloadUpdate(cb) {
   };
 }
 
-/**
- * Notify UI
- */
-function notify(state) {
-  listeners.forEach((cb) => cb([...state]));
+function notify() {
+  listeners.forEach((cb) => cb([...queue]));
 }
 
-/**
- * Add download to queue
- */
+/* ---------------- ADD DOWNLOAD ---------------- */
 export function addDownload(item) {
+  const exists = queue.find((q) => q.id === item.id);
+
+  if (exists) {
+    exists.retries += 1;
+    notify();
+    return;
+  }
+
   queue.push({
     id: item.id,
     name: item.name,
     url: item.url,
     progress: 0,
-    status: "queued", // queued | downloading | done | failed
+    status: "queued",
     retries: 0,
   });
 
   processQueue();
-  notify(queue);
+  notify();
 }
 
-/**
- * Simulated download process
- */
+/* ---------------- FAKE DOWNLOAD ---------------- */
 function fakeDownload(item) {
   return new Promise((resolve) => {
     let progress = 0;
@@ -58,14 +57,12 @@ function fakeDownload(item) {
         item.progress = Math.min(100, progress);
       }
 
-      notify(queue);
-    }, 300);
+      notify();
+    }, 250);
   });
 }
 
-/**
- * Process queue sequentially
- */
+/* ---------------- PROCESS QUEUE ---------------- */
 async function processQueue() {
   if (isProcessing) return;
 
@@ -76,19 +73,17 @@ async function processQueue() {
 
     try {
       await fakeDownload(item);
-    } catch (err) {
+    } catch (e) {
       item.status = "failed";
     }
 
-    notify(queue);
+    notify();
   }
 
   isProcessing = false;
 }
 
-/**
- * Retry failed downloads
- */
+/* ---------------- RETRY FAILED ---------------- */
 export function retryFailed() {
   queue.forEach((item) => {
     if (item.status === "failed") {
