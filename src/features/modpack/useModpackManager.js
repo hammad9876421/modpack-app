@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import {
   loadModpacks,
   createModpack,
@@ -6,6 +7,8 @@ import {
   deleteModpack,
   updateModpackMeta,
 } from "./storage/modpackStorage";
+
+import { getModpackReport } from "../intelligence/modpackIntelligence";
 
 export default function useModpackManager() {
   const [modpacks, setModpacks] = useState([]);
@@ -36,7 +39,7 @@ export default function useModpackManager() {
 
   /* ---------------- DELETE ---------------- */
   const removePack = (id) => {
-    deleteModpack(id);
+    deleteModpacks(id);
 
     const updated = modpacks.filter((p) => p.id !== id);
     setModpacks(updated);
@@ -112,6 +115,13 @@ export default function useModpackManager() {
     );
   };
 
+  /* ---------------- INTELLIGENCE LAYER ---------------- */
+  const getActiveReport = () => {
+    if (!activePack) return null;
+
+    return getModpackReport(activePack);
+  };
+
   /* ---------------- RETURN API ---------------- */
   return {
     modpacks,
@@ -123,8 +133,10 @@ export default function useModpackManager() {
     switchPack,
     addModToActivePack,
 
-    // 🧠 NEW ENGINE FEATURES
     setVersion,
     setLoader,
+
+    // 🧠 INTELLIGENCE OUTPUT
+    getActiveReport,
   };
 }
