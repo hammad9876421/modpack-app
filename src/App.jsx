@@ -1,6 +1,8 @@
 import { useState } from "react";
 import MainLayout from "./layouts/MainLayout";
 import BottomNav from "./features/shared/BottomNav";
+import PageTransition from "./features/ui/PageTransition";
+import { ThemeProvider } from "./features/theme/ThemeContext";
 
 import HomePage from "./features/home/HomePage";
 import SearchPage from "./features/search/SearchPage";
@@ -21,9 +23,19 @@ export default function App() {
   };
 
   return (
-    <MainLayout>
-      <div className="page">{renderPage()}</div>
-      <BottomNav page={page} setPage={setPage} />
-    </MainLayout>
+    <ThemeProvider>
+  <MainLayout>
+    <div className="page">
+      <PageTransition>
+        {renderPage()}
+      </PageTransition>
+    </div>
+
+    <BottomNav
+      page={page}
+      setPage={setPage}
+    />
+  </MainLayout>
+</ThemeProvider>
   );
 }

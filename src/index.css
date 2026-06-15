@@ -109,3 +109,123 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+.skeleton-card {
+  background: #1f2937;
+  padding: 16px;
+  border-radius: 16px;
+  margin-bottom: 12px;
+}
+
+.sk-title {
+  height: 18px;
+  width: 60%;
+  background: #374151;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  animation: pulse 1.2s infinite;
+}
+
+.sk-line {
+  height: 12px;
+  width: 90%;
+  background: #374151;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  animation: pulse 1.2s infinite;
+}
+
+.sk-line.short {
+  width: 40%;
+}
+
+.sk-buttons {
+  height: 30px;
+  width: 100%;
+  background: #374151;
+  border-radius: 8px;
+  margin-top: 10px;
+  animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.4; }
+}
+
+.page-fade {
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 100;
+  animation: fadeIn .2s;
+}
+
+.bottom-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  background: #18181b;
+
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+
+  padding: 20px;
+
+  min-height: 260px;
+
+  z-index: 101;
+
+  animation: sheetUp .25s ease-out;
+}
+
+.sheet-handle {
+  width: 48px;
+  height: 5px;
+
+  border-radius: 999px;
+
+  background: #555;
+
+  margin: 0 auto 20px;
+}
+
+@keyframes sheetUp {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+.dark {
+  background: #111827;
+  color: white;
+  min-height: 100vh;
+}
+
+.light {
+  background: white;
+  color: black;
+  min-height: 100vh;
+}

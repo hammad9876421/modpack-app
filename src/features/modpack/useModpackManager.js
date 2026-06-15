@@ -39,7 +39,7 @@ export default function useModpackManager() {
 
   /* ---------------- DELETE ---------------- */
   const removePack = (id) => {
-    deleteModpacks(id);
+    deleteModpack(id);
 
     const updated = modpacks.filter((p) => p.id !== id);
     setModpacks(updated);
